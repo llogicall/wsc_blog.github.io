@@ -12,7 +12,22 @@
     "mvs": "M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"   
 },
     "needComment":1,
-    "allHead": "<style>body { cursor: url('https://example.com/my-cursor.cur'), auto; }</style><script src='https://cdn.jsdelivr.net/npm/canvas-nest.js@2.0.4/dist/canvas-nest.min.js'></script>"
+    "allHead": "<style>
+  /* ===== 1. 动态渐变背景 ===== */
+  body {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    min-height: 100vh;
+    /* ===== 2. 自定义鼠标样式 ===== */
+    cursor: url('https://img.seedvault.cn/i/2026/08/23/d6f49097-9672-4f52-ac13-3d2d9ce9ba56_compressed6a8aa8926db6d187.png'), auto;
+  }
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+</style>"
     
     
     
