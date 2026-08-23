@@ -20,14 +20,14 @@
     animation: gradientBG 15s ease infinite;
     min-height: 100vh;
     /* ===== 2. 自定义鼠标样式 ===== */
-    cursor: url('https://img.seedvault.cn/i/2026/08/23/d6f49097-9672-4f52-ac13-3d2d9ce9ba56_compressed6a8aa8926db6d187.png'), auto;
+    cursor: url('https://img.seedvault.cn/i/2026/08/23/17874715390666a8aa6b725809187.png'), auto;
   }
   @keyframes gradientBG {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
-</style>"
+</style>",
     
     
     
