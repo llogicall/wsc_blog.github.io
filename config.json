@@ -12,23 +12,7 @@
     "mvs": "M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"   
 },
     "needComment":1,
-    "allHead": "<style>
-  /* ===== 1. 动态渐变背景 ===== */
-  body {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-    min-height: 100vh;
-    /* ===== 2. 自定义鼠标样式 ===== */
-    cursor: url('https://img.seedvault.cn/i/2026/08/23/17874715390666a8aa6b725809187.png'), auto;
-  }
-  @keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-</style>",
-    
-    
+    "allHead": "<style>body { background: #1a1a2e; cursor: url('https://img.seedvault.cn/i/2026/08/23/d6f49097-9672-4f52-ac13-3d2d9ce9ba56_compressed6a8aa8926db6d187.png'), auto; } #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }</style><script>(function(){var c=document.createElement('canvas');c.id='snow-canvas';document.body.appendChild(c);var ctx=c.getContext('2d');var w,h;function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight;}window.addEventListener('resize',resize);resize();var flakes=[];var numFlakes=150;for(var i=0;i<numFlakes;i++){flakes.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*3+1,vx:(Math.random()-0.5)*0.5,vy:Math.random()*1.5+0.5});}function draw(){ctx.clearRect(0,0,w,h);ctx.fillStyle='rgba(255,255,255,0.8)';ctx.beginPath();for(var i=0;i<flakes.length;i++){var f=flakes[i];ctx.moveTo(f.x,f.y);ctx.arc(f.x,f.y,f.r,0,2*Math.PI);}ctx.fill();for(var i=0;i<flakes.length;i++){var f=flakes[i];f.x+=f.vx;f.y+=f.vy;if(f.y>h){f.y=0;f.x=Math.random()*w;}if(f.x>w)f.x=0;if(f.x<0)f.x=w;}}setInterval(draw,30);})();</script>"
+
     
 }
