@@ -2,5 +2,18 @@
     "title":"cc 用来play的Blog",
     "subTitle":"始终保持好奇心和求知欲！",
     "avatarUrl":"https://img.seedvault.cn/i/2026/01/10/1768039827205696225921f331187.png",
-    "GMEEK_VERSION":"last"
+    "GMEEK_VERSION":"last",
+    "startSite":"08/22/2026",
+    "onePageListNum":20,
+    "exlink": {
+    "mvs": "https://llogicall.github.io/MVS_Pipeline_Web/"
+},
+    "iconList": {
+    "mvs": "M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"   
+},
+    "needComment":1,
+    "allHead": "<style>body { cursor: url('https://example.com/my-cursor.cur'), auto; }</style><script src='https://cdn.jsdelivr.net/npm/canvas-nest.js@2.0.4/dist/canvas-nest.min.js'></script>"
+    
+    
+    
 }
