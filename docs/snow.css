@@ -1,0 +1,142 @@
+/* ===== Snow Cursor ===== */
+html, body, a, button, input, textarea, select, [role="button"], label, .clickable {
+  cursor: url('../snow-cursor.png') 16 16, auto !important;
+}
+*::before, *::after { cursor: inherit !important; }
+
+/* ===== Snow Canvas ===== */
+#snow-bg-canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+body { background: #0b1628 !important; }
+#header, #content, #footer { position: relative; z-index: 1; }
+
+/* Header */
+#header {
+  border-bottom: 1px solid rgba(168, 212, 240, 0.15) !important;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Title */
+.title-left a {
+  background: linear-gradient(180deg, #ffffff 0%, #a8d4f0 40%, #6aa3cf 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* Avatar */
+.avatar {
+  border: 2px solid rgba(168, 212, 240, 0.4) !important;
+  box-shadow: 0 0 20px rgba(100, 180, 220, 0.2) !important;
+}
+.avatar:hover {
+  border-color: #a8d4f0 !important;
+  box-shadow: 0 0 30px rgba(100, 180, 220, 0.4) !important;
+}
+
+/* Post list */
+.SideNav {
+  background: rgba(12, 25, 50, 0.75) !important;
+  border: 1px solid rgba(168, 212, 240, 0.12) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 12px !important;
+}
+.SideNav-item {
+  border-bottom: 1px solid rgba(168, 212, 240, 0.06) !important;
+  transition: all 0.3s ease !important;
+}
+.SideNav-item:hover {
+  background: rgba(168, 212, 240, 0.06) !important;
+  border-left: 3px solid rgba(168, 212, 240, 0.4) !important;
+}
+
+/* Labels */
+.Label {
+  border-radius: 20px !important;
+  border: 1px solid rgba(168, 212, 240, 0.3) !important;
+}
+
+/* Links */
+.markdown-body a, .SideNav-item a {
+  color: #7ec8e3 !important;
+}
+.markdown-body a:hover {
+  color: #b0e0f0 !important;
+  text-shadow: 0 0 10px rgba(100, 180, 220, 0.3) !important;
+}
+
+/* Markdown body */
+.markdown-body {
+  background: rgba(12, 25, 50, 0.75) !important;
+  border: 1px solid rgba(168, 212, 240, 0.1) !important;
+  color: #c0d4e8 !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 12px !important;
+}
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  color: #a8d4f0 !important;
+  border-bottom: 1px solid rgba(168, 212, 240, 0.12) !important;
+}
+.markdown-body code {
+  background: rgba(168, 212, 240, 0.08) !important;
+  color: #a8d4f0 !important;
+  border: 1px solid rgba(168, 212, 240, 0.15) !important;
+}
+.markdown-body pre code {
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: #b0c8e0 !important;
+}
+.markdown-body blockquote {
+  border-left: 4px solid rgba(126, 200, 227, 0.5) !important;
+  background: rgba(126, 200, 227, 0.05) !important;
+}
+.markdown-body hr {
+  border: none !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, rgba(168, 212, 240, 0.3), transparent) !important;
+}
+
+/* Search */
+.subnav-search-input {
+  background: rgba(12, 25, 50, 0.8) !important;
+  border: 1px solid rgba(168, 212, 240, 0.2) !important;
+  color: #c0d4e8 !important;
+}
+.subnav-search-input:focus {
+  border-color: #7ec8e3 !important;
+  box-shadow: 0 0 12px rgba(100, 180, 220, 0.15) !important;
+}
+.subnav-search button {
+  background: linear-gradient(135deg, #a8d4f0, #6aa3cf) !important;
+  color: #0b1628 !important;
+}
+.subnav {
+  background: rgba(12, 25, 50, 0.75) !important;
+  border: 1px solid rgba(168, 212, 240, 0.1) !important;
+}
+
+/* Comment */
+#cmButton {
+  background: linear-gradient(135deg, #a8d4f0, #6aa3cf) !important;
+  color: #0b1628 !important;
+}
+
+/* Footer */
+#footer { color: rgba(160, 185, 210, 0.5) !important; }
+#footer a { color: #7ec8e3 !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0b1628; }
+::-webkit-scrollbar-thumb { background: rgba(168, 212, 240, 0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(168, 212, 240, 0.5); }
