@@ -12,7 +12,9 @@
     "mvs": "M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"   
 },
     "needComment":1,
-    "allHead": "<link rel=\"stylesheet\" href=\"static/cyberpunk.css\">\n<script src=\"static/cyberpunk.js\"></script>"
+    // "allHead": "<link rel=\"stylesheet\" href=\"static/cyberpunk.css\">\n<script src=\"static/cyberpunk.js\"></script>",
+    "allHead": "<link rel=\"stylesheet\" href=\"static/snow.css\">\n<script src=\"static/snow.js\"></script>"
+
 
     
 }
