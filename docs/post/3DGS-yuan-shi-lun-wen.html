@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <link rel="stylesheet" href="nodeloc.css">
+<script src="nodeloc.js"></script>
+    <link rel="icon" href="https://img.seedvault.cn/i/2026/01/10/1768039827205696225921f331187.png">
+    <link rel="stylesheet" href="themes.css">
+    <script>
+        // Load saved theme immediately to prevent flash
+        (function() {
+            var savedTheme = localStorage.getItem("gmeek_theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            // For Primer compatibility
+            if (savedTheme === "dark") {
+                document.documentElement.setAttribute("data-color-mode", "dark");
+            } else {
+                document.documentElement.setAttribute("data-color-mode", "light");
+            }
+        })();
+    </script>
+    
+<meta name="description" content="3D Gaussian Splatting for Real-Time Radiance Field Rendering
+<img width='1539' height='366' alt='Image' src='https://github.com/user-attachments/assets/5f17a781-4b06-46ef-942f-85348e3b4361' />
+
+新视角合成任务，nerf的后继之作，相比较nerf大大减小了开销。">
+<meta property="og:title" content="3DGS原始论文">
+<meta property="og:description" content="3D Gaussian Splatting for Real-Time Radiance Field Rendering
+<img width='1539' height='366' alt='Image' src='https://github.com/user-attachments/assets/5f17a781-4b06-46ef-942f-85348e3b4361' />
+
+新视角合成任务，nerf的后继之作，相比较nerf大大减小了开销。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://llogicall.github.io/wsc_blog.github.io/post/3DGS-yuan-shi-lun-wen.html">
+<meta property="og:image" content="https://img.seedvault.cn/i/2026/01/10/1768039827205696225921f331187.png">
+<title>3DGS原始论文</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--border);margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+/* Avatar */
+.avatar {transition: 0.8s;width:64px;height:64px;object-fit: cover;}
+.avatar:hover{transform: scale(1.15) rotate(360deg);}
+
+/* Title */
+.title-left a{color:inherit;text-decoration:none;vertical-align: bottom;font-size:40px;font-weight: bold;font-family:Monaco;margin-left:8px;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right button{margin-right:8px;padding:16px;}
+.title-right .circle{padding: 14px 16px;}
+
+/* SideNav */
+.SideNav{min-width: 360px;}
+.SideNav-icon{margin-right: 16px}
+.SideNav-item .Label{color: #fff;margin-left:4px;}
+.d-flex{min-width:0;}
+.listTitle{overflow:hidden;white-space:nowrap;text-overflow: ellipsis;max-width: 100%;}
+.listLabels{white-space:nowrap;display:flex;}
+.listLabels object{max-height:16px;max-width:24px;}
+
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .avatar {width:40px;height:40px;}
+    .blogTitle{display:none;}
+    #buttonRSS{display:none;}
+    .LabelTime{display:none;}
+}
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--border);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">3DGS原始论文</h1>
+<div class="title-right">
+    <a href="https://llogicall.github.io/wsc_blog.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/llogicall/wsc_blog.github.io/issues/6" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <!-- Theme switcher will be added by theme-switcher.js -->
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>3D Gaussian Splatting for Real-Time Radiance Field Rendering<br>
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/5f17a781-4b06-46ef-942f-85348e3b4361"><img width="1539" height="366" alt="Image" src="https://github.com/user-attachments/assets/5f17a781-4b06-46ef-942f-85348e3b4361" style="max-width: 100%; height: auto; max-height: 366px;; aspect-ratio: 1539 / 366; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>新视角合成任务，nerf的后继之作，相比较nerf大大减小了开销。<br>
+主要特性：可微分的volume表示，非结构化，显式，</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/3d6b0230-2bca-4080-97e4-9ae2f0d78993"><img width="1248" height="255" alt="Image" src="https://github.com/user-attachments/assets/3d6b0230-2bca-4080-97e4-9ae2f0d78993" style="max-width: 100%; height: auto; max-height: 255px;; aspect-ratio: 1248 / 255; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<h3>优化</h3>
+<p>首先从SfM得到的稀疏点云开始，定义：<br>
+$$<br>
+G(x) = e^{-\frac{1}{2}(x)\Sigma^{-1}(x)}<br>
+$$<br>
+通过直接优化协方差矩阵$\Sigma$以获得表示辐射场的3D高斯，协方差矩阵只有在其为半正定时才具有物理意义，3D高斯所有参数都是用梯度下降进行优化，这缺失了半正定约束，所以采取：<br>
+$$<br>
+\Sigma = RSS^T R^T<br>
+$$<br>
+其中S,R分别为缩放和旋转矩阵，最终的$\Sigma$类似于描述一个椭球体的构型。为了允许独立优化这两个因子，将它们分开存储：一个用于缩放的3D向量s和一个用于表示旋转的四元数q。它们可以轻松地转换为各自的矩阵并组合，确保归一化q以获得有效的单位四元数。</p>
+<p>对α使用sigmoid激活函数，将其限制在[0-1)范围内并获得平滑的梯度，并且对协方差的缩放使用指数激活函数，原因类似。将初始协方差矩阵估计为各向同性高斯，其轴等于到最近三个点的距离的平均值。损失函数是L1和D-SSIM的组合：<br>
+$$<br>
+\mathcal{L} = (1 - \lambda)\mathcal{L}<em>1 + \lambda\mathcal{L}</em>{\text{D--SSIM}}<br>
+$$</p>
+<h3>高斯自适应控制</h3>
+<p>每100次迭代进行一次密集化，并移除任何基本透明的高斯.</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/3b64f06b-e46f-47b7-90fe-098495a06217"><img width="600" height="351" alt="Image" src="https://github.com/user-attachments/assets/3b64f06b-e46f-47b7-90fe-098495a06217" style="max-width: 100%; height: auto; max-height: 351px;; aspect-ratio: 600 / 351; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>对于处于欠重建区域的小高斯，需要覆盖必须创建的新几何体。为此，最好克隆高斯，即简单地创建一个相同大小的副本，并沿位置梯度方向移动它。<br>
+另一方面，在高方差区域的大高斯需要被分割成更小的高斯。用两个新的高斯替换这样的高斯，并将其缩放比例除以一个因子.</p>
+<h3>高斯快速可微分光栅化器</h3>
+<p>首先将屏幕划分为16×16的分块（tiles），然后继续对视锥体和每个分块进行3D高斯的剔除。具体来说，只保留与视锥体相交且有99%置信区间的高斯。此外，使用一个保护带（guard band）来简单地拒绝处于极端位置的高斯（即那些均值靠近近平面且在视锥体之外的高斯），因为计算它们投影后的2D协方差会不稳定。然后，我们根据每个高斯重叠的分块数量实例化它，并为每个实例分配一个组合了视图空间深度和分块ID的键。使用单个快速的GPU基数排序 [Merrill and Grimshaw 2010] 基于这些键对高斯进行排序。注意，没有额外的每像素点排序，混合是基于这个初始排序执行的。因此，我们的α混合在某些配置中可能是近似的。然而，随着泼溅接近单个像素的大小，这些近似变得可以忽略不计。这种选择极大地提高了训练和渲染性能，并且在收敛的场景中不会产生可见的伪影。</p>
+<p>在对高斯进行排序后，通过识别投影到给定分块的深度排序条目的第一个和最后一个，为每个分块生成一个列表。对于光栅化，为每个分块启动一个线程块。每个块首先协作地将高斯数据包加载到共享内存中，然后对于给定的像素，通过从前往后遍历列表来累积颜色和α值，从而在数据加载/共享和处理方面最大化并行性增益。当像素的α达到目标饱和度时，相应的线程停止。在固定的间隔，查询分块内的线程，当所有像素都饱和时（即α达到1），整个分块的处理终止。</p>
+<p>在光栅化过程中，α的饱和度是唯一的停止标准。与先前工作不同，我们不限制接收梯度更新的混合图元数量。我们强制执行这一属性是为了让我们的方法能够处理具有任意、变化深度复杂度的场景并准确学习它们，而无需依赖于特定场景的超参数调整。在反向传播过程中，我们必须因此在前向传播中恢复每像素混合点的完整序列。一种解决方案是在全局内存中为每个像素存储任意长的混合点列表 [Kopanas et al. 2021]。为了避免由此带来的动态内存管理开销，我们选择再次遍历每个分块的列表；我们可以重用前向传播中的排序高斯数组和分块范围。为了便于梯度计算，我们现在从后往前遍历它们。</p>
+<p>遍历从影响分块中任何像素的最后一个点开始，并且将点加载到共享内存再次协作进行。此外，每个像素只有在点的深度小于或等于前向传播中对其颜色有贡献的最后一个点的深度时，才会开始（昂贵的）重叠测试和点处理。第4节中描述的梯度计算需要原始混合过程中每一步的累积不透明度值。我们无需在反向传播中遍历一个显式的逐渐减小的不透明度列表，而是可以通过仅存储前向传播结束时的总累积不透明度来恢复这些中间不透明度。具体来说，每个点在前向过程中存储了最终累积的不透明度α；我们在从后往前的遍历中将其除以每个点的α，以获得梯度计算所需的系数。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://llogicall.github.io/wsc_blog.github.io">cc 用来play的Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if("08/22/2026"!=""){
+    var startSite=new Date("08/22/2026");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script src="theme-switcher.js"></script>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    if(iframe) {
+        iframe.contentWindow.postMessage(message,'https://utteranc.es');
+    }
+}
+
+// Theme switcher will be initialized by theme-switcher.js
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","llogicall/wsc_blog.github.io");
+    script.setAttribute("issue-term","title");
+    // Use theme switcher for theme detection
+    var currentTheme = localStorage.getItem("gmeek_theme") || "light";
+    if(currentTheme === "dark") {
+        script.setAttribute("theme","dark-blue");
+    } else if(currentTheme === "blue") {
+        script.setAttribute("theme","github-light");
+    } else {
+        script.setAttribute("theme","github-light");
+    }
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>
