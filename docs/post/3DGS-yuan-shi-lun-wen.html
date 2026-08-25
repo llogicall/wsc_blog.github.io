@@ -120,18 +120,20 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 主要特性：可微分的volume表示，非结构化，显式，</p>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/3d6b0230-2bca-4080-97e4-9ae2f0d78993"><img width="1248" height="255" alt="Image" src="https://github.com/user-attachments/assets/3d6b0230-2bca-4080-97e4-9ae2f0d78993" style="max-width: 100%; height: auto; max-height: 255px;; aspect-ratio: 1248 / 255; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
 <h3>优化</h3>
-<p>首先从SfM得到的稀疏点云开始，定义：<br>
-$$<br>
-G(x) = e^{-\frac{1}{2}(x)\Sigma^{-1}(x)}<br>
-$$<br>
-通过直接优化协方差矩阵$\Sigma$以获得表示辐射场的3D高斯，协方差矩阵只有在其为半正定时才具有物理意义，3D高斯所有参数都是用梯度下降进行优化，这缺失了半正定约束，所以采取：<br>
-$$<br>
-\Sigma = RSS^T R^T<br>
-$$<br>
-其中S,R分别为缩放和旋转矩阵，最终的$\Sigma$类似于描述一个椭球体的构型。为了允许独立优化这两个因子，将它们分开存储：一个用于缩放的3D向量s和一个用于表示旋转的四元数q。它们可以轻松地转换为各自的矩阵并组合，确保归一化q以获得有效的单位四元数。</p>
-<p>对α使用sigmoid激活函数，将其限制在[0-1)范围内并获得平滑的梯度，并且对协方差的缩放使用指数激活函数，原因类似。将初始协方差矩阵估计为各向同性高斯，其轴等于到最近三个点的距离的平均值。损失函数是L1和D-SSIM的组合：<br>
-$$<br>
-\mathcal{L} = (1 - \lambda)\mathcal{L}<em>1 + \lambda\mathcal{L}</em>{\text{D--SSIM}}<br>
+<p>首先从SfM得到的稀疏点云开始，定义：</p>
+<p>$$
+G(x) = e^{-\frac{1}{2}(x)\Sigma^{-1}(x)}
+$$</p>
+<p>通过直接优化协方差矩阵$\Sigma$以获得表示辐射场的3D高斯，协方差矩阵只有在其为半正定时才具有物理意义，3D高斯所有参数都是用梯度下降进行优化，这缺失了半正定约束，所以采取：</p>
+<p>$$
+\Sigma = RSS^T R^T
+$$</p>
+<p>其中S,R分别为缩放和旋转矩阵，最终的$\Sigma$类似于描述一个椭球体的构型。为了允许独立优化这两个因子，将它们分开存储：一个用于缩放的3D向量s和一个用于表示旋转的四元数q。它们可以轻松地转换为各自的矩阵并组合，确保归一化q以获得有效的单位四元数。</p>
+<p>对α使用sigmoid激活函数，将其限制在[0-1)范围内并获得平滑的梯度，并且对协方差的缩放使用指数激活函数，原因类似。将初始协方差矩阵估计为各向同性高斯，其轴等于到最近三个点的距离的平均值。损失函数是L1和D-SSIM的组合：</p>
+<p>$$
+
+\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda\mathcal{L}_{\text{D--SSIM}}
+
 $$</p>
 <h3>高斯自适应控制</h3>
 <p>每100次迭代进行一次密集化，并移除任何基本透明的高斯.</p>
@@ -232,6 +234,6 @@ function iFrameLoading(){
 
 
 </script>
-
+<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 </html>
