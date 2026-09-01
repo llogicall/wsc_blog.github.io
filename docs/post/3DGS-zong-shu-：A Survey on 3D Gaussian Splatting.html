@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <link rel="stylesheet" href="nodeloc.css">
+<script src="nodeloc.js"></script>
+    <link rel="icon" href="https://img.seedvault.cn/i/2026/01/10/1768039827205696225921f331187.png">
+    <link rel="stylesheet" href="themes.css">
+    <script>
+        // Load saved theme immediately to prevent flash
+        (function() {
+            var savedTheme = localStorage.getItem("gmeek_theme") || "light";
+            document.documentElement.setAttribute("data-theme", savedTheme);
+            // For Primer compatibility
+            if (savedTheme === "dark") {
+                document.documentElement.setAttribute("data-color-mode", "dark");
+            } else {
+                document.documentElement.setAttribute("data-color-mode", "light");
+            }
+        })();
+    </script>
+    
+<meta name="description" content="## 1. 介绍
+隐式辐射场（Implicit Radiance Field）：隐式辐射场能够表示场景中光线的分布，而无需明确定义场景的几何结构。">
+<meta property="og:title" content="3DGS综述：A Survey on 3D Gaussian Splatting">
+<meta property="og:description" content="## 1. 介绍
+隐式辐射场（Implicit Radiance Field）：隐式辐射场能够表示场景中光线的分布，而无需明确定义场景的几何结构。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://llogicall.github.io/wsc_blog.github.io/post/3DGS-zong-shu-%EF%BC%9AA%20Survey%20on%203D%20Gaussian%20Splatting.html">
+<meta property="og:image" content="https://img.seedvault.cn/i/2026/01/10/1768039827205696225921f331187.png">
+<title>3DGS综述：A Survey on 3D Gaussian Splatting</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--border);margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+/* Avatar */
+.avatar {transition: 0.8s;width:64px;height:64px;object-fit: cover;}
+.avatar:hover{transform: scale(1.15) rotate(360deg);}
+
+/* Title */
+.title-left a{color:inherit;text-decoration:none;vertical-align: bottom;font-size:40px;font-weight: bold;font-family:Monaco;margin-left:8px;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right button{margin-right:8px;padding:16px;}
+.title-right .circle{padding: 14px 16px;}
+
+/* SideNav */
+.SideNav{min-width: 360px;}
+.SideNav-icon{margin-right: 16px}
+.SideNav-item .Label{color: #fff;margin-left:4px;}
+.d-flex{min-width:0;}
+.listTitle{overflow:hidden;white-space:nowrap;text-overflow: ellipsis;max-width: 100%;}
+.listLabels{white-space:nowrap;display:flex;}
+.listLabels object{max-height:16px;max-width:24px;}
+
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .avatar {width:40px;height:40px;}
+    .blogTitle{display:none;}
+    #buttonRSS{display:none;}
+    .LabelTime{display:none;}
+}
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--border);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">3DGS综述：A Survey on 3D Gaussian Splatting</h1>
+<div class="title-right">
+    <a href="https://llogicall.github.io/wsc_blog.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/llogicall/wsc_blog.github.io/issues/7" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <!-- Theme switcher will be added by theme-switcher.js -->
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h2>1. 介绍</h2>
+<p>隐式辐射场（Implicit Radiance Field）：隐式辐射场能够表示场景中光线的分布，而无需明确定义场景的几何结构。NeRF 中，会使用一个或多个机器学习模型，将一组空间坐标和观察方向映射到特定的颜色和体积密度上：<br>
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/1db6adc7-9ca2-4882-9dbf-75406c4d9562"><img width="240" height="36" alt="Image" src="https://github.com/user-attachments/assets/1db6adc7-9ca2-4882-9dbf-75406c4d9562" style="max-width: 100%; height: auto; max-height: 36px;; aspect-ratio: 240 / 36; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a><br>
+c是颜色参数，$\sigma$是体积密度参数</p>
+<p>显式辐射场（Explicit Radiance Field）：显式辐射场直接表示了光在离散空间结构中的分布。与隐式辐射场类似，显式辐射场也可以这样表示：<br>
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9efeefc1-4b94-4a98-ae76-58ec05ebe181"><img width="329" height="46" alt="Image" src="https://github.com/user-attachments/assets/9efeefc1-4b94-4a98-ae76-58ec05ebe181" style="max-width: 100%; height: auto; max-height: 46px;; aspect-ratio: 329 / 46; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p>3D 高斯：两种方法的结合优势，以可学习的 3D 高斯函数为数据结构的基础元素；同时，3D 高斯分割直接为每个高斯函数编码不透明度。</p>
+<p>体积渲染（Volumetric rendering）：体积渲染的目的是将 3D 体积模型转换为图像，这一过程是通过沿相机光线传递辐射信息来实现的。<br>
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/8a4a9f80-43d6-4219-a10e-685284117e3c"><img width="355" height="85" alt="Image" src="https://github.com/user-attachments/assets/8a4a9f80-43d6-4219-a10e-685284117e3c" style="max-width: 100%; height: auto; max-height: 85px;; aspect-ratio: 355 / 85; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a><br>
+其中，r(t)表示体积密度，c(r(t),d)表示该点颜色，T（t）表示透射率。光线追踪方法通过系统地沿着光线进行“步进”，并在离散的间隔处采样场景的属性，从而近似计算体积渲染积分。</p>
+<p>基于点的渲染（Point-based rendering）：3D GS 采用 3D 高斯点作为基本渲染单元，这些点具有明确的属性特征（如颜色和不透明度），而不是隐式的神经特征。</p>
+<h2>2.原理</h2>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/a7b75e19-35b6-4383-99bb-ccf64f85bd64"><img width="1617" height="430" alt="Image" src="https://github.com/user-attachments/assets/a7b75e19-35b6-4383-99bb-ccf64f85bd64" style="max-width: 100%; height: auto; max-height: 430px;; aspect-ratio: 1617 / 430; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+(a) splatting步骤将 3D 高斯分布投影到图像空间。(b) 3D 高斯滤波将图像分割成多个不重叠的块，即tiles。(c) 3D 高斯滤波会复制这些覆盖多个tiles的高斯分布，并为每个副本分配一个标识符，即tile ID。(d) 通过渲染这些排序后的高斯分布，我们可以获得每个瓦片内的所有像素。需要注意的是，像素和瓦片的处理流程是独立的，可以并行进行。</div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://llogicall.github.io/wsc_blog.github.io">cc 用来play的Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if("08/22/2026"!=""){
+    var startSite=new Date("08/22/2026");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script src="theme-switcher.js"></script>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    if(iframe) {
+        iframe.contentWindow.postMessage(message,'https://utteranc.es');
+    }
+}
+
+// Theme switcher will be initialized by theme-switcher.js
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","llogicall/wsc_blog.github.io");
+    script.setAttribute("issue-term","title");
+    // Use theme switcher for theme detection
+    var currentTheme = localStorage.getItem("gmeek_theme") || "light";
+    if(currentTheme === "dark") {
+        script.setAttribute("theme","dark-blue");
+    } else if(currentTheme === "blue") {
+        script.setAttribute("theme","github-light");
+    } else {
+        script.setAttribute("theme","github-light");
+    }
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>
